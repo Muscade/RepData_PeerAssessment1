@@ -15,7 +15,7 @@ activity<-read.csv("./activity.csv", na.strings="NA")
 
 ## What is mean total number of steps taken per day?
 To calculate average number of steps taken per day we use a new variable with aggregate number of steps per day.
-```{r showtable, results="asis"}
+```{r}
 steps.per.day <- aggregate(steps ~ date, data = activity, sum)
 avg.steps.with.na <- mean(steps.per.day$steps, na.omit = TRUE)
 median.steps.with.na <- median(steps.per.day$steps, na.rm = TRUE)
@@ -40,7 +40,36 @@ qplot(interval, steps, data = daily.pattern, geom="path")
 2. The maximum number of steps were made in the `r daily.pattern$interval[which.max(daily.pattern$steps)]`th 5-minute interval.
 
 ## Imputing missing values
-1. The total number of mi
+1. Calculating the number of NA values.
+```{r}
+na.num <- sum(is.na(activity$steps))
+```
 
+The total number of missing values in the activity dataset is equal `r format(na.num, digits=1)`.
+
+2. We used mean for appropriate 5-minute interval to replace missing values.
+3. New dataset (activity.imp) was created with imputed missing values.
+```{r}
+library(plyr)
+activity.imp <- merge(activity, daily.pattern, by.x="interval", by.y="interval")
+names(activity.imp)<-c("interval", "steps", "date", "avg.5min")
+for(i in 1:nrow(activity.imp)) {
+  if(is.na(activity.imp$steps[i])) activity.imp$steps[i] <- activity.imp$avg.5min[i]
+}
+```
+4. Here you can see a histogram of the total number of steps taken each day (after imputing missing values).
+
+```{r}
+steps.per.day.imp <- aggregate(steps ~ date, data = activity.imp, sum)
+avg.steps.without.na <- mean(steps.per.day.imp$steps, na.omit = TRUE)
+median.steps.without.na <- median(steps.per.day.imp$steps, na.rm = TRUE)
+hist(steps.per.day.imp$steps, xlab = "steps")
+```
+
+The average number of steps per day (after imputing missing values) is equal `r format(avg.steps.without.na, digits=1, nsmall=1)`, median is equal `r format(median.steps.without.na, digits=1, nsmall=1)`.
+
+The median of new dataset is different from the original one and is equal to the mean value. The mean value doesn't change.
+
+After imputing missing data the total daily number of steps increased a little bit.
 
 ## Are there differences in activity patterns between weekdays and weekends?
