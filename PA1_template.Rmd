@@ -30,8 +30,8 @@ hist(steps.per.day$steps, xlab = "steps")
 2. The average number of steps per day is equal `r format(avg.steps.with.na, digits=1, nsmall=1)`, median is equal `r format(median.steps.with.na, digits=1, nsmall=1)`.
 
 ## What is the average daily activity pattern?
-1. To calculate average number of steps taken, averaged across all days we used aggregate function. daily activity pattern we use aggregate function. The following plot demonstrates the average daily activity pattern.
-```{r}
+1. To calculate average number of steps taken, averaged across all days, we used aggregate function. The following plot demonstrates the average daily activity pattern.
+```{r results="hide"}
 library(ggplot2)
 daily.pattern <- aggregate(steps ~ interval, data = activity, mean)
 qplot(interval, steps, data = daily.pattern, geom="path")
@@ -78,17 +78,16 @@ After imputing missing data the total daily number of steps increased a little b
 
 ```{r results="hide"}
   loc <- Sys.getlocale("LC_TIME")
-#   Sys.setenv(TZ="GMT")
-  Sys.setlocale("LC_TIME", locale="English")
+  newloc<-Sys.setlocale("LC_TIME", locale="English")
   d <- as.Date(activity.imp$date, tz="GMT")
   activity.imp$wd <- weekdays(d)
-#   activity.imp$wdf <- factor(as.numeric(activity.imp$wd == "Sunday" | activity.imp$wd == "Saturday"), labels = c("weekend", "weekday"))
-  Sys.setlocale("LC_TIME", locale = loc)
+  activity.imp$wdf <- factor(as.numeric(activity.imp$wd == "Sunday" | activity.imp$wd == "Saturday"), labels = c("weekend", "weekday"))
+  loc <- Sys.setlocale("LC_TIME", locale = loc)
 ```
 
 2. The following diagram demonstrates the differences in activity patterns between weekdays and weekends.
 
 ```{r}
-#   avg.wd <- aggregate(steps ~ interval + wdf, data = activity.imp, mean)
-#   qplot(interval, steps, data = avg.wd, facets = wdf ~ ., geom = "path")
+  avg.wd <- aggregate(steps ~ interval + wdf, data = activity.imp, mean)
+  qplot(interval, steps, data = avg.wd, facets = wdf ~ ., geom = "path")
 ```
