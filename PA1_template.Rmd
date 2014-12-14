@@ -7,19 +7,40 @@ output:
 
 
 ## Loading and preprocessing the data
-
+At first we read the data file.
+```{r}
+activity<-read.csv("./activity.csv", na.strings="NA")
+```
 
 
 ## What is mean total number of steps taken per day?
+To calculate average number of steps taken per day we use a new variable with aggregate number of steps per day.
+```{r showtable, results="asis"}
+steps.per.day <- aggregate(steps ~ date, data = activity, sum)
+avg.steps.with.na <- mean(steps.per.day$steps, na.omit = TRUE)
+median.steps.with.na <- median(steps.per.day$steps, na.rm = TRUE)
+```
 
+1. Here you can see a histogram of the total number of steps taken each day.
 
+```{r}
+hist(steps.per.day$steps, xlab = "steps")
+```
+
+2. The average number of steps per day is equal `r format(avg.steps.with.na, digits=1, nsmall=1)`, median is equal `r format(median.steps.with.na, digits=1, nsmall=1)`.
 
 ## What is the average daily activity pattern?
+1. To calculate average number of steps taken, averaged across all days we used aggregate function. daily activity pattern we use aggregate function. The following plot demonstrates the average daily activity pattern.
+```{r}
+library(ggplot2)
+daily.pattern <- aggregate(steps ~ interval, data = activity, mean)
+qplot(interval, steps, data = daily.pattern, geom="path")
+```
 
-
+2. The maximum number of steps were made in the `r daily.pattern$interval[which.max(daily.pattern$steps)]`th 5-minute interval.
 
 ## Imputing missing values
-
+1. The total number of mi
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
