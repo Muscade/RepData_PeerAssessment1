@@ -73,3 +73,22 @@ The median of new dataset is different from the original one and is equal to the
 After imputing missing data the total daily number of steps increased a little bit.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+1. Creating factor variable with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend.
+
+```{r results="hide"}
+  loc <- Sys.getlocale("LC_TIME")
+#   Sys.setenv(TZ="GMT")
+  Sys.setlocale("LC_TIME", locale="English")
+  d <- as.Date(activity.imp$date, tz="GMT")
+  activity.imp$wd <- weekdays(d)
+#   activity.imp$wdf <- factor(as.numeric(activity.imp$wd == "Sunday" | activity.imp$wd == "Saturday"), labels = c("weekend", "weekday"))
+  Sys.setlocale("LC_TIME", locale = loc)
+```
+
+2. The following diagram demonstrates the differences in activity patterns between weekdays and weekends.
+
+```{r}
+#   avg.wd <- aggregate(steps ~ interval + wdf, data = activity.imp, mean)
+#   qplot(interval, steps, data = avg.wd, facets = wdf ~ ., geom = "path")
+```
